@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { SharedService } from "./shared.service";
-
+import { IData } from "./data.interface";
+import { Observable } from "rxjs";
 @Component({
   selector: "app-sibling2",
   template: `
@@ -18,8 +19,7 @@ import { SharedService } from "./shared.service";
           </tr>
         </thead>
         <tbody>
-          //
-          <tr *ngFor="let row of userTable">
+          <tr *ngFor="let row of (userTable | async); trackBy: trackIndex">
             <th scope="row">{{ row.id }}</th>
             <td (click)="sendData(row.name)">{{ row.name }}</td>
             <td>{{ row.username }}</td>
@@ -31,37 +31,32 @@ import { SharedService } from "./shared.service";
   `
 })
 export class UserListComponent {
-  userTable: UserData[] = [];
-  actualData: UserData[] = [];
-  searchtext = "";
-  constructor(private shared: SharedService) {
-    this.shared.castData.subscribe(user => {
-      this.searchtext = user;
-      this.searchProps();
-    });
-  }
+  userTable: Observable<IData[]>;
+  actualData: any;
+  searchtext: string = "";
+
+  constructor(private shared: SharedService) {}
 
   ngOnInit() {
-    this.shared.getAllData().subscribe(data => {
-      this.userTable = data.json();
-      this.actualData = data.json();
-    });
+    this.userTable = this.shared.getAllData();
+    this.actualData = this.userTable;
   }
 
   searchProps() {
     let findData = this.searchtext.toLowerCase();
     this.userTable = this.actualData.filter(ele => {
-      if (
-        ele["name"].toLowerCase().indexOf(findData) != -1 ||
-        ele["username"].toLowerCase().indexOf(findData) != -1 ||
-        ele["email"].toLowerCase().indexOf(findData) != -1
-      )
-        return ele;
+      ["name", "username", "email"].map(
+        subele => subele.toLowerCase().indexOf(findData) != -1
+      );
+      return ele;
     });
   }
 
   sendData(data) {
     this.shared.passtoSearch(data);
+  }
+  trackIndex(index, row) {
+    return row ? row.id : undefined;
   }
 }
 
@@ -87,4 +82,6 @@ class UserData {
     catchPhrase: string;
     bs: string;
   };
+
+  ngOnDestroy() {}
 }
