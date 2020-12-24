@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Http } from "@angular/http";
 import { BehaviorSubject } from "rxjs";
 import { IData } from "./data.interface";
-
+import { take } from "rxjs/operators";
 @Injectable()
 export class SharedService {
   constructor(public http: Http) {}
@@ -23,6 +23,8 @@ export class SharedService {
   getAllData() {
     return this.http
       .get("https://jsonplaceholder.typicode.com/users")
-      .map(data => <IData[]>data.json());
+      .map(data => <IData[]>data.json())
+      .pipe(take(1))
+      .do(data => console.log("data"));
   }
 }

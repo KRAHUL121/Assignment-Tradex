@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
+import { Observable } from "rxjs";
 import { SharedService } from "./shared.service";
 
 @Component({
@@ -10,20 +11,24 @@ import { SharedService } from "./shared.service";
         placeholder="Search text .."
         (input)="passData($event.target.value)"
       />
-      <br/>    <br/>
-      Selected Data: {{ selectedUser }}
+      <br />
+      <br />
+      Selected Data: {{ selectedUser | async }}
     </p>
   `
 })
-export class SearchInputComponent {
-  selectedUser: string = "";
-  constructor(private shared: SharedService) {
-    this.shared.passSelectedCast.subscribe(user => {
-      console.log(user)
-      this.selectedUser = user;
-    });
+export class SearchInputComponent implements OnInit {
+  // Declarations
+  selectedUser: Observable<string>;
+
+  constructor(private shared: SharedService) {}
+
+  // Init Call Backs :Hook
+  ngOnInit() {
+    this.selectedUser = this.shared.passSelectedCast;
   }
 
+  // Pass Data to Subject
   passData(data) {
     this.shared.changeState(data);
   }
