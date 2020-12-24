@@ -4,7 +4,7 @@ Step 1: Using Async pipe to print observable
         to reduce memory leak and fast rendering
 
 Step 2: Using TrackBy Index to increase rendering speed.
- 
+  
 Step 3 : Unsubscribing Subsciption in ngOnDestroy
 
 Step 4: Improving Code Standardiztion by including Interfaces
