@@ -33,7 +33,7 @@ import { Observable } from "rxjs";
 export class UserListComponent {
   userTable: Observable<IData[]>;
   actualData: any;
-  searchtext: string = "";
+  searchtext: string = "";   
 
   constructor(private shared: SharedService) {}
 
